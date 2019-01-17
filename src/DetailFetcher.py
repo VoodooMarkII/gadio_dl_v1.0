@@ -51,6 +51,10 @@ class DetailFetcher:
             timeline.append([left_img_link, title, text, ref_link, timestamp])
         return timeline
 
+    def fetch_intro(self):
+        intro = self.bs.find('p',class_ ='story_desc').get_text(strip= True)
+        return intro
+
     def fetch_story(self):
         pass
 
@@ -75,6 +79,12 @@ class DetailFetcher:
         djs = self.fetch_djs()
         for dj in djs:
             djs_token.appendChild(doc.createTextNode(dj))
+
+        # Write introduction token
+        intro_token = doc.createElement('introduction')
+        root_token.appendChild(intro_token)
+        intro = self.fetch_intro()
+        intro_token.appendChild(doc.createTextNode(intro))
 
         # Write timeline token
         timeline_token = doc.createElement('timeline')
