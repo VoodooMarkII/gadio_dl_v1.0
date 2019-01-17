@@ -5,7 +5,7 @@ import os
 import threading
 
 import Page
-import  Database
+import Database
 import utils
 
 
@@ -111,21 +111,27 @@ class DetailFetcher:
 
     def download_imgs(self, path):
         threads = []
-        folder = os.path.join(path, 'img')
-        if not os.path.exists(folder):
-            os.makedirs(folder)
+        img_folder = os.path.join(path, 'img')
+        if not os.path.exists(img_folder):
+            os.makedirs(img_folder)
 
-        headline_img = self.fetch_hl_img_link()
+        # Download headline image.
+        headline_img_url = self.fetch_hl_img_link()
+        img_extension = headline_img_url.split('.')[-1]
+        headline_img_filename = 'headline.' + img_extension
+        self.__download_item(headline_img_url, os.path.join(img_folder, headline_img_filename))
+
         for idx, timedot in enumerate(self.fetch_timeline()):
             img_url = timedot[0]
             img_extension = img_url.split('.')[-1]
             if img_url is not None:
-                dst_path = os.path.join(folder, '%d.%s' % (idx, img_extension))
+                dst_path = os.path.join(img_folder, '%d.%s' % (idx, img_extension))
                 t = threading.Thread(target=self.__download_item, args=(img_url, dst_path))
                 threads.append(t)
 
         for i in threads:
             i.start()
+
         for i in threads:
             i.join()
 
@@ -159,10 +165,10 @@ class DetailFetcher:
         filename = '%s_%s_%s.%s' % (series, title, date, extension)
         self.__download_item(audio_url, os.path.join(folder, filename))
 
+
 if __name__ == '__main__':
     db = Database.Database()
     res = db.select_gadio('gadio', 'link=="https://www.gcores.com/radios/104397"')
     df = DetailFetcher(res[0])
     df.download()
     pass
-
