@@ -20,11 +20,7 @@ class DetailFetcher:
         re1 = r'(.*?)\?'
         rg = re.compile(re1, re.IGNORECASE | re.DOTALL)
         m = rg.findall(img_link)[0]
-        if m:
-            img_link = m[0]
-        else:
-            img_link = None
-        return img_link
+        return m
 
     def fetch_djs(self):
         djs = list(map(lambda tag: utils.get_fullname(tag),
@@ -118,6 +114,8 @@ class DetailFetcher:
         folder = os.path.join(path, 'img')
         if not os.path.exists(folder):
             os.makedirs(folder)
+
+        headline_img = self.fetch_hl_img_link()
         for idx, timedot in enumerate(self.fetch_timeline()):
             img_url = timedot[0]
             img_extension = img_url.split('.')[-1]
@@ -162,9 +160,9 @@ class DetailFetcher:
         self.__download_item(audio_url, os.path.join(folder, filename))
 
 if __name__ == '__main__':
-    # db = Database.Database()
-    # res = db.select_gadio('gadio', 'link=="https://www.gcores.com/radios/104397"')
-    # df = DetailFetcher(res[0])
-    # df.download()
+    db = Database.Database()
+    res = db.select_gadio('gadio', 'link=="https://www.gcores.com/radios/104397"')
+    df = DetailFetcher(res[0])
+    df.download()
     pass
 
