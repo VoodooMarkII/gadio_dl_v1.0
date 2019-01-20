@@ -78,7 +78,9 @@ class DetailFetcher:
         root_token.appendChild(djs_token)
         djs = self.fetch_djs()
         for dj in djs:
-            djs_token.appendChild(doc.createTextNode(dj))
+            dj_token = doc.createElement('DJ')
+            djs_token.appendChild(dj_token)
+            dj_token.appendChild(doc.createTextNode(dj))
 
         # Write introduction token
         intro_token = doc.createElement('introduction')
